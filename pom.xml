@@ -8,7 +8,7 @@
     <artifactId>maven-release-example</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-    <name>Example for Maven Release</name>
+    <name>maven-release-example</name>
     <description>An example for maven release</description>
     <url>https://github.com/Harlantown/maven-release-example</url>
     <licenses>
@@ -21,6 +21,7 @@
         <developer>
             <name>Harlantown</name>
             <email>magiccandy178@gmail.com</email>
+            <organization>priorg</organization>
             <url>https://github.com/Harlantown</url>
         </developer>
     </developers>
