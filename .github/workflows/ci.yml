@@ -12,11 +12,22 @@ jobs:
       - name: export secrets
         run: |
           export GITHUB_TOKEN=${{ secrets.GH_TOKEN }}
-          export GPG_KEY_NAME=${{ secrets.GPG_KEY_NAME }}
-          export GPG_PASSPHRASE=${{ secrets.GPG_PASSPHRASE }}
           export OSSRH_JIRA_USERNAME=${{ secrets.OSSRH_JIRA_USERNAME }}
           export OSSRH_JIRA_PASSWORD=${{ secrets.OSSRH_JIRA_PASSWORD }}
+#          export GPG_KEY_NAME=${{ secrets.GPG_KEY_NAME }}
+#          export GPG_PASSPHRASE=${{ secrets.GPG_PASSPHRASE }}
+
           
+      - name: Import GPG key
+        id: import_gpg
+        uses: crazy-max/ghaction-import-gpg@v5
+        with:
+          gpg_private_key: ${{ secrets.GPG_KEY_NAME }}
+          passphrase: ${{ secrets.GPG_PASSPHRASE }}
+          
+      - name: List keys
+        run: gpg -K
+        
       - uses: shaowenchen/debugger-action@v1
         name: debugger
         timeout-minutes: 30
