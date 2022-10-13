@@ -8,37 +8,15 @@
     <artifactId>maven-release-example</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-
     <name>Example for Maven Release</name>
     <description>An example for maven release</description>
     <url>https://github.com/Harlantown/maven-release-example</url>
-    <inceptionYear>2022</inceptionYear>
-
-    <issueManagement>
-        <system>Github</system>
-        <url>https://github.com/Harlantown/maven-release-example/issues</url>
-    </issueManagement>
-
-    <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>7</version>
-    </parent>
-
     <licenses>
         <license>
-            <name>MIT License</name>
-            <url>https://mit-license.org/</url>
-            <distribution>repo</distribution>
+            <name>MIT</name>
+            <url>https://opensource.org/licenses/MIT</url>
         </license>
     </licenses>
-
-    <scm>
-        <url>https://github.com/Harlantown/maven-release-example</url>
-        <connection>scm:git:https://github.com/Harlantown/maven-release-example.git</connection>
-        <developerConnection>scm:git:https://github.com/Harlantown/maven-release-example.git</developerConnection>
-    </scm>
-
     <developers>
         <developer>
             <name>Harlantown</name>
@@ -46,13 +24,11 @@
             <url>https://github.com/Harlantown</url>
         </developer>
     </developers>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.7</maven.compiler.source>
-        <maven.compiler.target>1.7</maven.compiler.target>
-        <jcasbin.version>1.4.0</jcasbin.version>
-    </properties>
+    <scm>
+        <url>https://github.com/Harlantown/maven-release-example</url>
+        <connection>scm:git:https://github.com/Harlantown/maven-release-example.git</connection>
+        <developerConnection>scm:git:https://github.com/Harlantown/maven-release-example.git</developerConnection>
+    </scm>
 
     <distributionManagement>
         <snapshotRepository>
@@ -64,64 +40,29 @@
             <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <junit.version>4.13.2</junit.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.5</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <!-- We sign in the verify phase, which means it will happen before install and deploy (the last two phases)
-                             but not before earlier phases like test or package. -->
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                        <!-- If using gpg > 2.1 it is necessary for gpg to not try to use the pinentry programs
-                          however, it looks like Travis does not need this entry -->
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <!-- Allow attaching Javadoc during releases -->
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.4</version>
-                <configuration>
-                    <source>11</source>
-                    <detectJavaApiLink>false</detectJavaApiLink>
-                    <!-- Turn off Java 8 strict Javadoc checking -->
-                    <additionalparam>-Xdoclint:none</additionalparam>
-                    <tags>
-                        <tag>
-                            <name>notnull</name>
-                            <placement>a</placement>
-                            <head>Not null</head>
-                        </tag>
-                        <tag>
-                            <name>default</name>
-                            <placement>a</placement>
-                            <head>Default:</head>
-                        </tag>
-                    </tags>
-                </configuration>
-                <executions>
-                    <!-- Compress Javadoc into JAR and include that JAR when deploying. -->
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <!-- Include zipped source code in releases -->
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -131,224 +72,55 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
-                <!-- Automatically close and deploy from OSSRH -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <additionalparam>-Xdoclint:none</additionalparam>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.5</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!-- Prevent gpg from using pinentry programs -->
+                    <gpgArguments>
+                        <arg>--pinentry-mode</arg>
+                        <arg>loopback</arg>
+                    </gpgArguments>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
                 <version>1.6.7</version>
                 <extensions>true</extensions>
                 <configuration>
                     <serverId>ossrh</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <!-- Release versions will be synced to Maven Central automatically. -->
+                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
                     <autoReleaseAfterClose>true</autoReleaseAfterClose>
                 </configuration>
             </plugin>
         </plugins>
     </build>
 
-    <dependencies>
-        <!-- JUnit is a Java testing framework.
-          It is optional in the workflow of deploying with maven-semantic-release. -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-    <!--    <dependencies>-->
-    <!--        <dependency>-->
-    <!--            <groupId>junit</groupId>-->
-    <!--            <artifactId>junit</artifactId>-->
-    <!--            <version>4.13.1</version>-->
-    <!--            <scope>test</scope>-->
-    <!--        </dependency>-->
-    <!--        <dependency>-->
-    <!--            <groupId>org.casbin</groupId>-->
-    <!--            <artifactId>jcasbin</artifactId>-->
-    <!--            <version>${jcasbin.version}</version>-->
-    <!--        </dependency>-->
-    <!--        <dependency>-->
-    <!--            <groupId>com.amazonaws</groupId>-->
-    <!--            <artifactId>aws-java-sdk-s3</artifactId>-->
-    <!--            <version>1.11.327</version>-->
-    <!--        </dependency>-->
-    <!--        <dependency>-->
-    <!--            <groupId>com.amazonaws</groupId>-->
-    <!--            <artifactId>aws-java-sdk-dynamodb</artifactId>-->
-    <!--            <version>1.11.327</version>-->
-    <!--        </dependency>-->
-    <!--    </dependencies>-->
-
-    <!--    <build>-->
-    <!--        <pluginManagement>&lt;!&ndash; lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) &ndash;&gt;-->
-    <!--            <plugins>-->
-    <!--                &lt;!&ndash; clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle &ndash;&gt;-->
-    <!--                <plugin>-->
-    <!--                    <artifactId>maven-clean-plugin</artifactId>-->
-    <!--                    <version>3.1.0</version>-->
-    <!--                </plugin>-->
-    <!--                &lt;!&ndash; default lifecycle, jar packaging: see https://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_jar_packaging &ndash;&gt;-->
-    <!--                <plugin>-->
-    <!--                    <artifactId>maven-resources-plugin</artifactId>-->
-    <!--                    <version>3.0.2</version>-->
-    <!--                </plugin>-->
-    <!--                <plugin>-->
-    <!--                    <artifactId>maven-compiler-plugin</artifactId>-->
-    <!--                    <version>3.8.0</version>-->
-    <!--                </plugin>-->
-    <!--                <plugin>-->
-    <!--                    <artifactId>maven-surefire-plugin</artifactId>-->
-    <!--                    <version>2.22.1</version>-->
-    <!--                </plugin>-->
-    <!--                <plugin>-->
-    <!--                    <artifactId>maven-jar-plugin</artifactId>-->
-    <!--                    <version>3.0.2</version>-->
-    <!--                </plugin>-->
-    <!--                <plugin>-->
-    <!--                    <artifactId>maven-install-plugin</artifactId>-->
-    <!--                    <version>2.5.2</version>-->
-    <!--                </plugin>-->
-    <!--                <plugin>-->
-    <!--                    <artifactId>maven-deploy-plugin</artifactId>-->
-    <!--                    <version>2.8.2</version>-->
-    <!--                </plugin>-->
-    <!--                &lt;!&ndash; site lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#site_Lifecycle &ndash;&gt;-->
-    <!--                <plugin>-->
-    <!--                    <artifactId>maven-site-plugin</artifactId>-->
-    <!--                    <version>3.7.1</version>-->
-    <!--                </plugin>-->
-    <!--                <plugin>-->
-    <!--                    <artifactId>maven-project-info-reports-plugin</artifactId>-->
-    <!--                    <version>3.0.0</version>-->
-    <!--                </plugin>-->
-    <!--            </plugins>-->
-    <!--        </pluginManagement>-->
-    <!--        <plugins>-->
-    <!--            <plugin>-->
-    <!--                &lt;!&ndash; Allow attaching Javadoc during releases &ndash;&gt;-->
-    <!--                <groupId>org.apache.maven.plugins</groupId>-->
-    <!--                <artifactId>maven-javadoc-plugin</artifactId>-->
-    <!--                <version>2.10.4</version>-->
-    <!--                <configuration>-->
-    <!--                    <source>11</source>-->
-    <!--                    <detectJavaApiLink>false</detectJavaApiLink>-->
-    <!--                    &lt;!&ndash; Turn off Java 8 strict Javadoc checking &ndash;&gt;-->
-    <!--                    <additionalparam>-Xdoclint:none</additionalparam>-->
-    <!--                    <tags>-->
-    <!--                        <tag>-->
-    <!--                            <name>notnull</name>-->
-    <!--                            <placement>a</placement>-->
-    <!--                            <head>Not null</head>-->
-    <!--                        </tag>-->
-    <!--                        <tag>-->
-    <!--                            <name>default</name>-->
-    <!--                            <placement>a</placement>-->
-    <!--                            <head>Default:</head>-->
-    <!--                        </tag>-->
-    <!--                    </tags>-->
-    <!--                </configuration>-->
-    <!--                <executions>-->
-    <!--                    &lt;!&ndash; Compress Javadoc into JAR and include that JAR when deploying. &ndash;&gt;-->
-    <!--                    <execution>-->
-    <!--                        <id>attach-javadocs</id>-->
-    <!--                        <goals>-->
-    <!--                            <goal>jar</goal>-->
-    <!--                        </goals>-->
-    <!--                    </execution>-->
-    <!--                </executions>-->
-    <!--            </plugin>-->
-    <!--            <plugin>-->
-    <!--                <groupId>org.apache.maven.plugins</groupId>-->
-    <!--                <artifactId>maven-compiler-plugin</artifactId>-->
-    <!--                <configuration>-->
-    <!--                    <source>1.8</source>-->
-    <!--                    <target>1.8</target>-->
-    <!--                </configuration>-->
-    <!--            </plugin>-->
-    <!--            <plugin>-->
-    <!--                <groupId>org.codehaus.mojo</groupId>-->
-    <!--                <artifactId>cobertura-maven-plugin</artifactId>-->
-    <!--                <version>2.7</version>-->
-    <!--                <configuration>-->
-    <!--                    <formats>-->
-    <!--                        <format>html</format>-->
-    <!--                        <format>xml</format>-->
-    <!--                    </formats>-->
-    <!--                    <check/>-->
-    <!--                </configuration>-->
-    <!--            </plugin>-->
-    <!--            <plugin>-->
-    <!--                <groupId>org.eluder.coveralls</groupId>-->
-    <!--                <artifactId>coveralls-maven-plugin</artifactId>-->
-    <!--                <version>4.3.0</version>-->
-    <!--            </plugin>-->
-    <!--            <plugin>-->
-    <!--                <groupId>org.jacoco</groupId>-->
-    <!--                <artifactId>jacoco-maven-plugin</artifactId>-->
-    <!--                <version>0.7.6.201602180812</version>-->
-    <!--                <executions>-->
-    <!--                    <execution>-->
-    <!--                        <id>prepare-agent</id>-->
-    <!--                        <goals>-->
-    <!--                            <goal>prepare-agent</goal>-->
-    <!--                        </goals>-->
-    <!--                    </execution>-->
-    <!--                </executions>-->
-    <!--            </plugin>-->
-    <!--            <plugin>-->
-    <!--                <groupId>org.apache.maven.plugins</groupId>-->
-    <!--                <artifactId>maven-gpg-plugin</artifactId>-->
-    <!--                <version>1.5</version>-->
-    <!--                <executions>-->
-    <!--                    <execution>-->
-    <!--                        <id>sign-artifacts</id>-->
-    <!--                        &lt;!&ndash; We sign in the verify phase, which means it will happen before install and deploy (the last two phases)-->
-    <!--                             but not before earlier phases like test or package. &ndash;&gt;-->
-    <!--                        <phase>verify</phase>-->
-    <!--                        <goals>-->
-    <!--                            <goal>sign</goal>-->
-    <!--                        </goals>-->
-    <!--                        &lt;!&ndash; If using gpg > 2.1 it is necessary for gpg to not try to use the pinentry programs-->
-    <!--                          however, it looks like Travis does not need this entry &ndash;&gt;-->
-    <!--                    </execution>-->
-    <!--                </executions>-->
-    <!--                <configuration>-->
-    <!--                    &lt;!&ndash; Prevent gpg from using pinentry programs &ndash;&gt;-->
-    <!--                    <gpgArguments>-->
-    <!--                        <arg>&#45;&#45;pinentry-mode</arg>-->
-    <!--                        <arg>loopback</arg>-->
-    <!--                    </gpgArguments>-->
-    <!--                </configuration>-->
-    <!--            </plugin>-->
-    <!--            <plugin>-->
-    <!--                &lt;!&ndash; Include zipped source code in releases &ndash;&gt;-->
-    <!--                <groupId>org.apache.maven.plugins</groupId>-->
-    <!--                <artifactId>maven-source-plugin</artifactId>-->
-    <!--                <executions>-->
-    <!--                    <execution>-->
-    <!--                        <id>attach-sources</id>-->
-    <!--                        <goals>-->
-    <!--                            <goal>jar-no-fork</goal>-->
-    <!--                        </goals>-->
-    <!--                    </execution>-->
-    <!--                </executions>-->
-    <!--            </plugin>-->
-    <!--            <plugin>-->
-    <!--                &lt;!&ndash; Automatically close and deploy from OSSRH &ndash;&gt;-->
-    <!--                <groupId>org.sonatype.plugins</groupId>-->
-    <!--                <artifactId>nexus-staging-maven-plugin</artifactId>-->
-    <!--                <version>1.6.7</version>-->
-    <!--                <extensions>true</extensions>-->
-    <!--                <configuration>-->
-    <!--                    <serverId>ossrh</serverId>-->
-    <!--                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>-->
-    <!--                    &lt;!&ndash; Release versions will be synced to Maven Central automatically. &ndash;&gt;-->
-    <!--                    <autoReleaseAfterClose>true</autoReleaseAfterClose>-->
-    <!--                </configuration>-->
-    <!--            </plugin>-->
-    <!--        </plugins>-->
-    <!--    </build>-->
 </project>
