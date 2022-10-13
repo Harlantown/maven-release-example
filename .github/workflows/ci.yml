@@ -9,6 +9,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: test
+        run: |
+          echo "test"
+          echo ${{ secrets.GH_TOKEN }}
+          echo ${{ secrets.GPG_KEY_NAME }}
+          echo ${{ secrets.GPG_PASSPHRASE }}
+          echo ${{ secrets.OSSRH_JIRA_USERNAME }}
+          echo ${{ secrets.OSSRH_JIRA_PASSWORD }}
+          
       - name: Set up JDK 8
         uses: actions/setup-java@v3
         with:
@@ -39,3 +48,15 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           OSSRH_JIRA_USERNAME: ${{ secrets.OSSRH_JIRA_USERNAME }}
           OSSRH_JIRA_PASSWORD: ${{ secrets.OSSRH_JIRA_PASSWORD }}
+          
+      - run: |
+          echo GITHUB_TOKEN
+          echo GPG_KEY_NAME
+          echo GPG_PASSPHRASE
+          echo OSSRH_JIRA_USERNAME
+          echo OSSRH_JIRA_PASSWORD
+      - run: |
+          echo ${OSSRH_JIRA_USERNAME}
+          echo ${OSSRH_JIRA_PASSWORD}
+          echo ${GPG_KEY_NAME}
+          echo ${GPG_PASSPHRASE}
