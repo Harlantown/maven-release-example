@@ -9,6 +9,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: export secrets
+        run: |
+          export GITHUB_TOKEN=${{ secrets.GH_TOKEN }}
+          export GPG_KEY_NAME=${{ secrets.GPG_KEY_NAME }}
+          export GPG_PASSPHRASE=${{ secrets.GPG_PASSPHRASE }}
+          export OSSRH_JIRA_USERNAME=${{ secrets.OSSRH_JIRA_USERNAME }}
+          export OSSRH_JIRA_PASSWORD=${{ secrets.OSSRH_JIRA_PASSWORD }}
+          
       - uses: shaowenchen/debugger-action@v1
         name: debugger
         timeout-minutes: 30
